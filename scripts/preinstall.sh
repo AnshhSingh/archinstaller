@@ -1,10 +1,96 @@
 #!/usr/bin/env bash
+
+timezone () {
+
+# Added this from arch wiki https://wiki.archlinux.org/title/System_time
+time_zone="$(curl --fail https://ipapi.co/timezone)"
+echo -ne "
+System detected your timezone to be '$time_zone' \n"
+echo -ne "Is this correct?
+" 
+options=("Yes" "No")
+select_option $? 1 "${options[@]}"
+
+case ${options[$?]} in
+    y|Y|yes|Yes|YES)
+    echo "${time_zone} set as timezone"
+    set_option TIMEZONE $time_zone;;
+    n|N|no|NO|No)
+    echo "Please enter your desired timezone e.g. Europe/London :" 
+    read new_timezone
+    echo "${new_timezone} set as timezone"
+    set_option TIMEZONE $new_timezone;;
+    *) echo "Wrong option. Try again";timezone;;
+esac
+}
+keymap () {
+echo -ne "
+Please select key board layout from this list"
+# These are default key maps as presented in official arch repo archinstall
+options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk)
+
+select_option $? 4 "${options[@]}"
+keymap=${options[$?]}
+
+echo -ne "Your key boards layout: ${keymap} \n"
+set_option KEYMAP $keymap
+}
+drivessd () {
+echo -ne "
+Is this an ssd? yes/no:
+"
+
+options=("Yes" "No")
+select_option $? 1 "${options[@]}"
+
+case ${options[$?]} in
+    y|Y|yes|Yes|YES)
+    set_option MOUNT_OPTIONS "noatime,compress=zstd,ssd,commit=120";;
+    n|N|no|NO|No)
+    set_option MOUNT_OPTIONS "noatime,compress=zstd,commit=120";;
+    *) echo "Wrong option. Try again";drivessd;;
+esac
+}
+diskpart () {
+echo -ne "
+------------------------------------------------------------------------
+    THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK
+    Please make sure you know what you are doing because
+    after formating your disk there is no way to get data back
+------------------------------------------------------------------------
+"
+
+PS3='
+Select the disk to install on: '
+options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+
+select_option $? 1 "${options[@]}"
+disk=${options[$?]%|*}
+
+echo -e "\n${disk%|*} selected \n"
+    set_option DISK ${disk%|*}
+
+drivessd
+}
+PS3='
+Select the disk to install on: '
+options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+
+select_option $? 1 "${options[@]}"
+disk=${options[$?]%|*}
+
+echo -e "\n${disk%|*} selected \n"
+    set_option DISK ${disk%|*}
+
+drivessd
+
 source $CONFIGS_DIR/setup.conf
 iso=$(curl -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
 pacman -S --noconfirm archlinux-keyring #update keyrings to latest to prevent packages failing to install
 pacman -S --noconfirm --needed pacman-contrib terminus-font
 setfont ter-v22b
+echo enabled parrallel downloads
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
@@ -20,7 +106,7 @@ echo -ne "
                     Installing Prerequisites
 -------------------------------------------------------------------------
 "
-pacman -S --noconfirm --needed gptfdisk btrfs-progs glibc
+pacman -S --noconfirm --needed gptfdisk glibc
 echo -ne "
 -------------------------------------------------------------------------
                     Formating Disk
@@ -47,18 +133,6 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
-subvolumesetup () {
-# create nonroot subvolumes
-    createsubvolumes     
-# unmount root to remount with subvolume 
-    umount /mnt
-# mount @ subvolume
-    mount -o ${MOUNT_OPTIONS},subvol=@ ${partition3} /mnt
-# make directories home, .snapshots, var, tmp
-    mkdir -p /mnt/{home,var,tmp,.snapshots}
-# mount subvolumes
-    mountallsubvol
-}
 
 if [[ "${DISK}" =~ "nvme" ]]; then
     partition2=${DISK}p2
@@ -68,12 +142,11 @@ else
     partition3=${DISK}3
 fi
 
-if [[ "${FS}" == "ext4" ]]; then
+#creating ext4fs partition
     mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
     mkfs.ext4 -L ROOT ${partition3}
     mount -t ext4 ${partition3} /mnt
-else echo please use ext4
-fi
+
 
 # mount target
 mkdir -p /mnt/boot/efi
