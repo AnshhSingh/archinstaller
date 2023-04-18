@@ -6,9 +6,9 @@ This bash script makes Arch Linux is easier and a lot more faster with better mi
  1) Boot into any Arch Linux image
  2) run the commands(optional)
 
-   `pacman-key --init`
+`pacman-key --init`
 
-   `pacman-key --populate archlinux`
+`pacman-key --populate archlinux`
 
 3) Install git and clone this repo
 `pacman -Sy`
