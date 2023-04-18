@@ -6,23 +6,39 @@ This bash script makes Arch Linux is easier and a lot more faster with better mi
  1) Boot into any Arch Linux image
  2) run the commands(optional)
 
-`pacman-key --init`
+```
+pacman-key --init
+```
 
-`pacman-key --populate archlinux`
+```
+pacman-key --populate archlinux
+```
 
 3) Install git and clone this repo
-`pacman -Sy`
+```
+pacman -Sy
+```
 
-`pacman -S git`
+```
+pacman -S git
+```
  
-`git clone https://github.com/AnshhSingh/archinstaller/`
+```
+git clone https://github.com/AnshhSingh/archinstaller/
+```
 
 4) Run the script!
 
-`cd archinstall`
+```
+cd archinstall
+```
 
-`chmod +x arch.sh`
+```
+chmod +x arch.sh
+```
 
-`./arch.sh`
+```
+./arch.sh
+```
 
 5) The arch install script will guide you with rest of the process 
