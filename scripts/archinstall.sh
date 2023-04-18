@@ -3,7 +3,7 @@ aurhelp(){
     git clone https://aur.archlinux.org/yay.git
     makepkg -si --noconfirm
 }
-pacman -Sy archinstall
+pacman -S --noconfirm archinstall
 aurhelp
 archinstall
 
