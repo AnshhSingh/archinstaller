@@ -5,7 +5,7 @@ pacmansetup(){
     pacman-key --init
     pacman-key --populate archlinux
     pacman -S --noconfirm archlinux-keyring
-    pacman -S --needed base-devel git
+    pacman -S --noconfirm --needed base-devel git
     sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
     pacman -S --noconfirm --needed reflector rsync grub
     cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
