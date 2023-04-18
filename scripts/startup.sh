@@ -24,5 +24,6 @@ if [ $? -eq 1 ]; then
     pacmansetup
 else
     echo "please connect to internet using wifi or ethernet first"
+    exit
     
 fi
