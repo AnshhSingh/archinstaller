@@ -3,8 +3,10 @@ aurhelp(){
     git clone https://aur.archlinux.org/yay.git
     makepkg -si --noconfirm
 }
+pacman -Sy archinstall
 aurhelp
 archinstall
+
 echo -ne "
 -------------------------------------------------------------------------
                     Enabling Essential Services
