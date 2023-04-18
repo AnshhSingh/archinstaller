@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 aurhelp(){
-    git clone https://aur.archlinux.org/yay.git
-    makepkg -si --noconfirm
+    #git clone https://aur.archlinux.org/yay.git
+    #makepkg -si --noconfirm
+    pacman -S --noconfirm yay-bin
 }
 bluetooth(){
 pacman -S --noconfirm bluez
