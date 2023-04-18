@@ -3,9 +3,16 @@ aurhelp(){
     git clone https://aur.archlinux.org/yay.git
     makepkg -si --noconfirm
 }
+bluetooth(){
+pacman -S --noconfirm bluez
+pacman -S --noconfirm bluez-utils
+systemctl enable bluetooth.service
+systemctl start bluetooth.service
+}
 pacman -S --noconfirm archinstall
 aurhelp
 archinstall
+bluetooth
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -23,7 +30,6 @@ systemctl stop dhcpcd.service
 echo "  DHCP stopped"
 systemctl enable NetworkManager.service
 echo "  NetworkManager enabled"
-systemctl enable bluetooth
-echo "  Bluetooth enabled"
-systemctl enable avahi-daemon.service
-echo "  Avahi enabled"
+
+
+
