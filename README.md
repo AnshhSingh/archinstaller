@@ -32,6 +32,6 @@ chmod +x arch.sh
 ./arch.sh
 ```
 5) The arch install script will guide you with rest of the process 
-## note
+## Note
 - Arch Linux is not recommended for a complete Linux beginner
 
