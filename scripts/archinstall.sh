@@ -32,3 +32,17 @@ pacman -S --noconfirm archinstall
 archinstall
 bluetooth
 service
+sudo pacman -S base-devel linux-headers git --needed
+
+ 
+# gpu=$(lspci | grep -i '.* vga .* nvidia .*')
+
+# shopt -s nocasematch
+
+# if [[ $gpu == *' nvidia '* ]]; then
+#   printf 'Nvidia GPU is present try driver install?(Yes/No)"
+#   echo do_this
+# else
+#   printf 'Nvidia GPU is not present continuing with setup"
+#   echo do_that
+# fi
